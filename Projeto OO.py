@@ -1,7 +1,11 @@
 import pygame
 import random
 import sys
-from Buttons import Screen, Game
+from Screen import Screen
+from Game import Game
+from Prota import Prota
+from Inimigos import Inimigos
+#from Button import YtButton
 
 pygame.init()
 
@@ -15,6 +19,9 @@ pygame.mouse.set_visible(True)
 
 screen_1 = Screen()
 jogo_1 = Game()
+prota_1 = Prota(screen_1)
+inimigos_1 = Inimigos(screen_1, prota_1)
+#button_1 = YtButton(screen_1)
 
 #Tela Principal:
 def Menu_principal():
@@ -24,11 +31,11 @@ def Menu_principal():
     jogo_1.set_run_true()
     while jogo_1.run:
         clock.tick(200)
-        screen_1.set_screen_color("Branco")
+        screen_1.set_screen_color("white")
         pygame.mouse.get_pos()
         
-        screen_1.button_text(font = "arial",text = "ashjikdgashjkdgasukd", tamanho = 70, 
-                             col = "Preto", colrec = "#34dffd")
+        #button_1.button_text(font = "arial",text = "ashjikdgashjkdgasukd", tamanho = 70, 
+                             #col = "black", colrec = "#34dffd")
         
         jogo_1.event_get_keys()
                     
@@ -37,24 +44,16 @@ def Menu_principal():
     pygame.quit()
     
 
-#Jogo
+#Jogoasd
 def jogo():
 
-    
-    #Mouse/Personagem Principal
-    Prota = pygame.image.load(r"C:\Users\diogo\Downloads\Prota3.png").convert_alpha()
-    Prota_mask = pygame.mask.from_surface(Prota)
-    Prota_mask_imagem = Prota_mask.to_surface()
-    pmi_x = 0 
-    pmi_y = 0
-
+    #Personagem Principal
+    prota_1.prota_get_skin()
+    prota_1.prota_get_pos()
 
     #Criação de Inimigos:
-
-    Inimigo = pygame.Surface((20, 20))
-    Inimigo_mask = pygame.mask.from_surface(Inimigo)
-        
-
+    inimigos_1.set_inimigos("red")
+    
     jogo_1.set_run_true()
     while jogo_1.run:
         clock.tick(200)
@@ -62,34 +61,17 @@ def jogo():
         screen_1.get_mouse_pos()
         pygame.mouse.set_visible(False)
         
+        
         #Sistema de Colisão
-        col = screen_1.colors["Vermelho"]
-        if Prota_mask.overlap(Inimigo_mask, (screen_1.mpx - pmi_x,screen_1.mpy - pmi_y)):
-            col = screen_1.colors["Azul"]
-        
-        #Objetos 
-        
-        Inimigo_mask.to_surface()
-        Inimigo.fill(col)
-        screen_1.screen.blit(Inimigo, (screen_1.mpx, screen_1.mpy))
+        inimigos_1.collision_check()
         
         #Prota movimentos
-        key = pygame.key.get_pressed()
-        if key[pygame.K_w] == True:
-            pmi_y -= 5
-        if key[pygame.K_s] == True:
-            pmi_y += 5
-        if key[pygame.K_d] == True:
-            pmi_x += 5
-        if key[pygame.K_a] == True:
-            pmi_x -= 5
-            
+        prota_1.prota_get_controls()
         jogo_1.event_get_keys()
         
         #Teste masks
-        
-        screen_1.screen.blit(Prota_mask_imagem, (pmi_x,pmi_y))   
-        screen_1.screen.blit(Inimigo, screen_1.mp) 
+        screen_1.screen.blit(prota_1.Prota_mask_imagem, (prota_1.pmi_x,prota_1.pmi_y))   
+        screen_1.screen.blit(inimigos_1.Inimigo, screen_1.mp) 
                 
         #Update screen
         pygame.display.update()  
