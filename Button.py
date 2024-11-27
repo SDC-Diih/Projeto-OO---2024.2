@@ -1,89 +1,80 @@
 import pygame
 import sys
 import os
+from Game import Game
 
 
-
-class Button():
-    def __init__(self):
-        pass
-    
-    
-
-    def button_text(self, font, text, tamanho, col, colrec):
-        
-        if col in self.colors:
-            col = self.colors[col]
-        else:
-            pass
-        
-        if colrec in self.colors:
-            colrec = self.colors[colrec]
-        else:
-            pass
-        
-        # Desenhar texto no botão
-        TEXT_BUTTON = self.set_font(font, tamanho).render(text, True, col)
-        #Retângulo do butão + Coordenadas
-        RET_BUTTON = TEXT_BUTTON.get_rect(center=(400, 200))
-        pygame.draw.rect(self.screen, colrec , RET_BUTTON)
-        self.screen.blit(TEXT_BUTTON, RET_BUTTON)  
-        
-        
-        
-        
 pygame.init()
-screen = pygame.display.set_mode((800, 800))
-pygame.display.set_caption("Button!")
-
-
-class YtButton():
-
-	def __init__(self, image, x_pos, y_pos, text_input):
+class Button(Game):
+	def __init__(self,screen, image, x_pos, y_pos, text_input, scale):
+     
+		super(Button, self).__init__
+  
+		self.cena_jogo = False
+  
+		self.scale = scale
+		self.screen = screen
 		self.image = image
+		#Coordenadas do botão na tela
 		self.x_pos = x_pos
 		self.y_pos = y_pos
-		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+  
+		#Criação do texto e retângulo das coordenadas do botão
 		self.text_input = text_input
+		self.main_font = pygame.font.SysFont("arial", 70)
 		self.text = self.main_font.render(self.text_input, True, "white")
 		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
 
-    def update(self):
-        screen.blit(self.image, self.rect)
-        screen.blit(self.text, self.text_rect)
+		self.set_image(image, scale)	
+		
+ 
+	def create_and_function(self):
+		#Atualiza a posição do botão e do texto com as coordenadas dos seus retângulos
+		self.screen.blit(self.button_surface, self.rect)
+		self.screen.blit(self.text, self.text_rect)
+  
+		#Realiza os comandos necessários para a checagem das operações do botão
 
-    def checkForInput(self, position):
-
+	
+		self.get_mouse_pos()
+		self.checkForInput(self.mouse_position)
+		self.changeColor(self.mouse_position)
+  
+	def checkForInput(self, position):
+		#Checar posição do mouse
 		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
-			print("Button Press!")
-
-    def changeColor(self, position):
+			for event in pygame.event.get():
+				#Checar click do mouse no botão
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					self.cena_jogo = True
+					
+					
+        
+        
+	def changeColor(self, position):
+		#Checar posição do mouse
 		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+			#Trocar a cor para Verde caso o mouse esteja sobre o botão
 			self.text = self.main_font.render(self.text_input, True, "green")
 		else:
+			#Manter a cor do botão - No caso Branca
 			self.text = self.main_font.render(self.text_input, True, "white")
 
-    def set_font(self, tipo, tamanho):
-        self.main_font = pygame.font.SysFont(name = tipo, size = tamanho)
 
-current_dir = os.path.dirname(__file__)
-image_path = os.path.join(current_dir, "assets", "button.png")
-button_surface = pygame.image.load(image_path)
-button_surface = pygame.transform.scale(button_surface, (400, 150))
+	def set_font(self, tipo, tamanho):
+		#Selecionar a fonte do texto do botão
+		self.main_font = pygame.font.SysFont(name = tipo, size = tamanho)
 
-button = YtButton(button_surface, 400, 300, "Button")
 
-while True:
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			pygame.quit()
-			sys.exit()
-		if event.type == pygame.MOUSEBUTTONDOWN:
-			button.checkForInput(pygame.mouse.get_pos())
+	def set_image(self, image, scale):
+		#Escolher a imagem do fundo do botão + Colocar ele em escala se necessário
+		self.current_dir = os.path.dirname(__file__)
+		self.image_path = os.path.join(self.current_dir, "assets", image)
+		self.button_surface = pygame.image.load(self.image_path)
+		#Checa se a escala está em tupla -> (xxx,yyy) / Se não estiver não faz nada
+		if isinstance(scale, tuple):
+			self.button_surface = pygame.transform.scale(self.button_surface, scale)
+		self.rect = self.button_surface.get_rect(center=(self.x_pos, self.y_pos))
 
-	screen.fill("white")
 
-	button.update()
-	button.changeColor(pygame.mouse.get_pos())
 
-	pygame.display.update()

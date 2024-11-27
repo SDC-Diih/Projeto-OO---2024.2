@@ -19,8 +19,8 @@ class Prota():
         
         
     def prota_get_pos(self):
-        self.pmi_x = 0 
-        self.pmi_y = 0
+        self.pmi_x = 400
+        self.pmi_y = 400
     def prota_get_controls(self):
         key = pygame.key.get_pressed()
         if key[pygame.K_w] == True:
