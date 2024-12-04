@@ -10,9 +10,10 @@ class Screen():
         self.set_screen(self.size)
         self.get_mouse_pos()
         self.get_screen_middle_point(size)
+        
     def set_screen(self, size):
         self.flags = pygame.SCALED | pygame.RESIZABLE 
-        self.screen = pygame.display.set_mode(size, self.flags , vsync=1)
+        self.screen = pygame.display.set_mode(size, self.flags , vsync=0)
          
     def set_screen_color(self,col):
         self.screen.fill(col)

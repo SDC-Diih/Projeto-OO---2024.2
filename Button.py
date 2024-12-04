@@ -72,6 +72,7 @@ class Button(Game):
 		self.image_path = os.path.join(self.current_dir, "assets", image)
 		self.button_surface = pygame.image.load(self.image_path)
 		#Checa se a escala está em tupla -> (xxx,yyy) / Se não estiver não faz nada
+  
 		if isinstance(scale, tuple):
 			self.button_surface = pygame.transform.scale(self.button_surface, scale)
 		self.rect = self.button_surface.get_rect(center=(self.x_pos, self.y_pos))

@@ -17,6 +17,9 @@ class Prota():
         self.Prota_mask = pygame.mask.from_surface(self.Prota)
         self.Prota_mask_imagem = self.Prota_mask.to_surface()
         
+    def prota_update(self):
+        #Teste masks
+        self.screen.blit(self.Prota_mask_imagem, (self.pmi_x,self.pmi_y)) 
         
     def prota_get_pos(self):
         self.pmi_x = 400

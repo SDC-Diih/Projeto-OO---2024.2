@@ -13,60 +13,107 @@ class Inimigos():
         self.prota = prota_instance
         self.ini_x, self.ini_y = 0, 0
         self.Prota_mask = prota_instance.Prota_mask
-        
+        self.inimigos = []  # Lista para armazenar os inimigos
          
-    def set_inimigos(self, col):
-        
-        self.Inimigo = pygame.Surface((20, 20))
-        self.Inimigo_mask = pygame.mask.from_surface(self.Inimigo)
-        self.Inimigo_mask.to_surface() 
-        self.Inimigo.fill(col)
-        self.ini_x, self.ini_y = self.spawn_x, self.spawn_y
-        self.screen.blit(self.Inimigo, (self.ini_x, self.ini_y))
+    def set_inimigos(self, col, quantidade):
+        self.quantidade = quantidade
+        #Cria múltiplos inimigos e os armazena na lista
+        for i in range(quantidade):
+            # Criação de cada inimigo
+            inimigo = {
+                'surface': pygame.Surface((20, 20)),
+                'mask': pygame.mask.from_surface(pygame.Surface((20, 20))),
+                'x': random.randint(0, 0),
+                'y': random.randint(0, 0),
+                'speed': 1  # Velocidade inicial
+            }
+            inimigo['surface'].fill(col)
+            inimigo['mask'] = pygame.mask.from_surface(inimigo['surface'])
+            
+            self.inimigos.append(inimigo)
             
     def set_speed_inimigos(self, ini_speed):
         
-        self.ini_speed = ini_speed
+        for inimigo in self.inimigos:
+            inimigo['speed'] = ini_speed
         
-        
+    def movimentar_inimigos(self):
         # Ponto central da tela
-        mid_x, mid_y = screen_1.middle_point[0], screen_1.middle_point[1]
+        self.mid_x, self.mid_y = self.screen.get_width() // 2, self.screen.get_height() // 2
         
         
-        # Distâncias do inimigo ao ponto central
-        spd_mpx = self.ini_x - mid_x
-        spd_mpy = self.ini_y - mid_y
         
+        for inimigo in self.inimigos:
+            # Distâncias do inimigo ao ponto central
+            self.spd_mpx = inimigo['x'] - self.mid_x
+            self.spd_mpy = inimigo['y'] - self.mid_y
+            
+            # Ajustar posição horizontalmente
+            if self.spd_mpx > 5:
+                inimigo['x'] -= inimigo['speed']
+            elif self.spd_mpx < -5:
+                inimigo['x'] += inimigo['speed']
+            
+            # Ajustar posição verticalmente
+            if self.spd_mpy > 5:
+                inimigo['y'] -= inimigo['speed']
+            elif self.spd_mpy < -5:
+                inimigo['y'] += inimigo['speed']
+    def deletar_criar(self):
+        #Verificar se está suficientemente próximo ao centro e DELETAR quando estiver
         
-        # Ajustar posição horizontalmente
-        if spd_mpx > 5:
-            self.ini_x -= self.ini_speed
-        elif spd_mpx < -5:
-            self.ini_x += self.ini_speed
+        novos_inimigos = []
         
-        # Ajustar posição verticalmente
-        if spd_mpy > 5:
-            self.ini_y -= self.ini_speed
-        elif spd_mpy < -5:
-            self.ini_y += self.ini_speed
+        for i in range(len(self.inimigos)):
+            inimigo = self.inimigos[i]
+            
+            # Verificar se o inimigo está suficientemente próximo do centro
+            self.spd_mpx = inimigo['x'] - self.mid_x
+            self.spd_mpy = inimigo['y'] - self.mid_y
+            
+            if ((-5 <= self.spd_mpy <= 5) and (-5 <= self.spd_mpx <= 5)):
+                
+                 # Quando o inimigo atinge o centro, remove o inimigo atual
+                self.inimigos.pop(i)
+                
+                # Cria um novo inimigo 
+                self.set_inimigos(col="red", quantidade=1)
+                # Importante: Depois de remover o inimigo, deve-se interromper esse ciclo
+                # A operação de pop altera o tamanho da lista, então interrompemos o loop para reiniciar a iteração
+                
+                
+                break
         
-        
-        #Verificar se está suficientemente próximo ao centro
-        if ((-5 <= spd_mpy <= 5) and (-5 <= spd_mpx <= 5)):
-            print("Chegou")
-        else:
-            pass
     def set_inimigos_spawn(self):
-        self.spawn_x, self.spawn_y = random.randint(1, 1000), random.randint(0, 100)
+        for inimigo in self.inimigos:
+            self.lado = random.randint(1,4)
+    
+            if self.lado == 1:
+                #Cima 
+                inimigo['x'] = random.randint(0, self.screen.get_width())
+                inimigo['y'] = random.randint(0, self.screen.get_width()//15)
+            if self.lado == 2:
+                #Baixo
+                inimigo['x'] = random.randint(0, self.screen.get_width())
+                inimigo['y'] = random.randint(self.screen.get_height()//15, self.screen.get_height())
+            if self.lado == 3:
+                #Esquerda 
+                inimigo['x'] = random.randint(0, self.screen.get_width()//15)
+                inimigo['y'] = random.randint(0, self.screen.get_height())
+            if self.lado == 4:
+                #Direita
+                inimigo['x'] = random.randint(self.screen.get_height()//15, self.screen.get_height())
+                inimigo['y'] = random.randint(0, self.screen.get_height())
 
     def collision_check(self):
         #self.mpx, self.mpy = pygame.mouse.get_pos()
         pmi_x, pmi_y = self.prota.pmi_x, self.prota.pmi_y
         
-        if self.Prota_mask.overlap(self.Inimigo_mask, (self.ini_x - pmi_x,self.ini_y - pmi_y)):
-            self.col = "blue"
-        else:
-            self.col = "red"
+        for inimigo in self.inimigos:
+            if self.Prota_mask.overlap(inimigo['mask'], (inimigo['x'] - pmi_x, inimigo['y'] - pmi_y)):
+                col = "blue"
+            else:
+                col = "red"
             
-        self.Inimigo.fill(self.col)
-        self.screen.blit(self.Inimigo, (self.ini_x, self.ini_y))
+            inimigo['surface'].fill(col)
+            self.screen.blit(inimigo['surface'], (inimigo['x'], inimigo['y']))

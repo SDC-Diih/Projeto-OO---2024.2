@@ -13,9 +13,8 @@ pygame.init()
 pygame.display.set_caption("Projeto OO")
 clock = pygame.time.Clock()
 
-#Mouse
 
-
+#Classes
 screen_1 = Screen((1000,800))
 jogo_1 = Game()
 prota_1 = Prota(screen_1)
@@ -24,15 +23,13 @@ inimigos_1 = Inimigos(screen_1, prota_1)
 button_1 = Button(screen_1.screen, "button.png", 400, 400, "Iniciar", scale = (500, 200))
 
 
-
-
 #Tela Principal:
 def Menu_principal():
     
     button_1.cena_jogo = False
     pygame.display.set_caption("Menu Principal")
-    
     pygame.mouse.set_visible(True)
+
     jogo_1.set_run_true()
     while jogo_1.run:
         clock.tick(200)
@@ -49,10 +46,10 @@ def Menu_principal():
             #screen_1.set_screen_color("black")
             jogo_1.set_run_false()
             jogo()
-            
+        
+        #Update Screen
         pygame.display.update()  
         
-    
 
 #Jogo
 def jogo():
@@ -64,10 +61,12 @@ def jogo():
     prota_1.prota_get_pos()
 
     #Criação de Inimigos:
+    
+    inimigos_1.set_inimigos(col = "red",quantidade = 20)
+    
+    #Spawn de Inimigos:
     inimigos_1.set_inimigos_spawn()
-    inimigos_1.set_inimigos("red")
-    
-    
+        
     jogo_1.cena_jogo = True
     while jogo_1.cena_jogo:
         clock.tick(200)
@@ -75,10 +74,16 @@ def jogo():
         screen_1.get_mouse_pos()
         pygame.mouse.set_visible(False)
         
+        prota_1.prota_update()
         
+        
+        
+        #Escolher velocidade + Movimentar + Criação/Delete
         inimigos_1.set_speed_inimigos(2)
+        inimigos_1.movimentar_inimigos()
+        inimigos_1.deletar_criar()
         
-        #Sistema de Colisão
+        #Detecção de Colisão
         inimigos_1.collision_check()
         
         #Prota movimentos
@@ -87,14 +92,13 @@ def jogo():
         
         
                 
-        #Teste masks
-        screen_1.screen.blit(prota_1.Prota_mask_imagem, (prota_1.pmi_x,prota_1.pmi_y))   
-        screen_1.screen.blit(inimigos_1.Inimigo, (inimigos_1.ini_x, inimigos_1.ini_y)) 
+          
                 
                 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F11:
                     pygame.display.toggle_fullscreen()
@@ -103,7 +107,9 @@ def jogo():
                     Menu_principal()
                     
         #Update screen
-        pygame.display.update()  
+        pygame.display.update() 
     
+Menu_principal()   
 #jogo()
-Menu_principal()
+pygame.quit()
+sys.exit()
