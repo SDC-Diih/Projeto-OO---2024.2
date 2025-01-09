@@ -23,8 +23,8 @@ class Inimigos():
             inimigo = {
                 'surface': pygame.Surface((20, 20)),
                 'mask': pygame.mask.from_surface(pygame.Surface((20, 20))),
-                'x': random.randint(0, 0),
-                'y': random.randint(0, 0),
+                'x': random.randint(0, 980),
+                'y': random.randint(0, 50),
                 'speed': 1  # Velocidade inicial
             }
             inimigo['surface'].fill(col)
@@ -37,28 +37,12 @@ class Inimigos():
         for inimigo in self.inimigos:
             inimigo['speed'] = ini_speed
         
-    def movimentar_inimigos(self):
-        # Ponto central da tela
-        self.mid_x, self.mid_y = self.screen.get_width() // 2, self.screen.get_height() // 2
-        
-        
+    def movimentar_inimigos(self)
         
         for inimigo in self.inimigos:
-            # Distâncias do inimigo ao ponto central
-            self.spd_mpx = inimigo['x'] - self.mid_x
-            self.spd_mpy = inimigo['y'] - self.mid_y
-            
-            # Ajustar posição horizontalmente
-            if self.spd_mpx > 5:
-                inimigo['x'] -= inimigo['speed']
-            elif self.spd_mpx < -5:
-                inimigo['x'] += inimigo['speed']
-            
             # Ajustar posição verticalmente
-            if self.spd_mpy > 5:
-                inimigo['y'] -= inimigo['speed']
-            elif self.spd_mpy < -5:
-                inimigo['y'] += inimigo['speed']
+            inimigo['y'] -= inimigo['speed']
+            
     def deletar_criar(self):
         #Verificar se está suficientemente próximo ao centro e DELETAR quando estiver
         
@@ -67,53 +51,27 @@ class Inimigos():
         for i in range(len(self.inimigos)):
             inimigo = self.inimigos[i]
             
-            # Verificar se o inimigo está suficientemente próximo do centro
-            self.spd_mpx = inimigo['x'] - self.mid_x
-            self.spd_mpy = inimigo['y'] - self.mid_y
-            
-            if ((-5 <= self.spd_mpy <= 5) and (-5 <= self.spd_mpx <= 5)):
-                
-                 # Quando o inimigo atinge o centro, remove o inimigo atual
-                self.inimigos.pop(i)
-                
+            # Verificar se o inimigo está suficientemente próximo do fim da tela
+            if (inimigo['y'] >= 770):    
+                 # Quando o inimigo atinge o fundo, remove o inimigo atual
+                self.inimigos.pop(i) 
                 # Cria um novo inimigo 
                 self.set_inimigos(col="red", quantidade=1)
                 # Importante: Depois de remover o inimigo, deve-se interromper esse ciclo
                 # A operação de pop altera o tamanho da lista, então interrompemos o loop para reiniciar a iteração
-                
-                
                 break
-        
-    def set_inimigos_spawn(self):
-        for inimigo in self.inimigos:
-            self.lado = random.randint(1,4)
-    
-            if self.lado == 1:
-                #Cima 
-                inimigo['x'] = random.randint(0, self.screen.get_width())
-                inimigo['y'] = random.randint(0, self.screen.get_width()//15)
-            if self.lado == 2:
-                #Baixo
-                inimigo['x'] = random.randint(0, self.screen.get_width())
-                inimigo['y'] = random.randint(self.screen.get_height()//15, self.screen.get_height())
-            if self.lado == 3:
-                #Esquerda 
-                inimigo['x'] = random.randint(0, self.screen.get_width()//15)
-                inimigo['y'] = random.randint(0, self.screen.get_height())
-            if self.lado == 4:
-                #Direita
-                inimigo['x'] = random.randint(self.screen.get_height()//15, self.screen.get_height())
-                inimigo['y'] = random.randint(0, self.screen.get_height())
 
     def collision_check(self):
         #self.mpx, self.mpy = pygame.mouse.get_pos()
         pmi_x, pmi_y = self.prota.pmi_x, self.prota.pmi_y
-        
+
+        #Checar a colisão entre os inimigos e o personagem principal - Caso haja colisão, encerrar o jogo 
         for inimigo in self.inimigos:
             if self.Prota_mask.overlap(inimigo['mask'], (inimigo['x'] - pmi_x, inimigo['y'] - pmi_y)):
                 col = "blue"
             else:
                 col = "red"
+                
             
             inimigo['surface'].fill(col)
             self.screen.blit(inimigo['surface'], (inimigo['x'], inimigo['y']))
