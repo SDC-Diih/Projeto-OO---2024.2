@@ -63,9 +63,6 @@ def jogo():
     #Criação de Inimigos:
     
     inimigos_1.set_inimigos(col = "red",quantidade = 20)
-    
-    #Spawn de Inimigos:
-    inimigos_1.set_inimigos_spawn()
         
     jogo_1.cena_jogo = True
     while jogo_1.cena_jogo:
@@ -78,8 +75,7 @@ def jogo():
         
         
         
-        #Escolher velocidade + Movimentar + Criação/Delete
-        inimigos_1.set_speed_inimigos(2)
+        #Movimentar + Deletar e Criar caso esteja no fim da tela
         inimigos_1.movimentar_inimigos()
         inimigos_1.deletar_criar()
         
