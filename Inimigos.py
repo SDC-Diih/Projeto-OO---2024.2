@@ -31,11 +31,6 @@ class Inimigos():
             inimigo['mask'] = pygame.mask.from_surface(inimigo['surface'])
             
             self.inimigos.append(inimigo)
-            
-    def set_speed_inimigos(self, ini_speed):
-        
-        for inimigo in self.inimigos:
-            inimigo['speed'] = ini_speed
         
     def movimentar_inimigos(self)
         
@@ -55,6 +50,10 @@ class Inimigos():
             if (inimigo['y'] >= 770):    
                  # Quando o inimigo atinge o fundo, remove o inimigo atual
                 self.inimigos.pop(i) 
+                
+                #Aumenta a velocidade a cada vez que atingem o fundo da tela
+                inimigo['speed'] += 0.05 # 1/20 para aumentar 1 de velocidade a cada vez que os 20 ininigos atingem o fundo
+               
                 # Cria um novo inimigo 
                 self.set_inimigos(col="red", quantidade=1)
                 # Importante: Depois de remover o inimigo, deve-se interromper esse ciclo
