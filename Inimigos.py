@@ -69,9 +69,9 @@ class Inimigos():
         for inimigo in self.inimigos:
             if self.Prota_mask.overlap(inimigo['mask'], (inimigo['x'] - pmi_x, inimigo['y'] - pmi_y)):
                 col = "blue"
+                pygame.quit()
             else:
                 col = "red"
-                
             
             inimigo['surface'].fill(col)
             self.screen.blit(inimigo['surface'], (inimigo['x'], inimigo['y']))
